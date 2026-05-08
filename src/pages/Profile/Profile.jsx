@@ -299,7 +299,7 @@ const StatsBox = ({ value, label, color, border }) => (
     </p>
   </div>
 );
-
+<></>
 const Section = ({ title, icon, children }) => (
   <div className="bg-white rounded-[35px] p-8 border border-slate-50 shadow-sm">
     <div className="flex items-center gap-3 mb-6">
