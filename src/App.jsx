@@ -13,6 +13,15 @@ import CreateClass from "./pages/Classes/CreateClass";
 import History from "./pages/History/History";
 import Profile from "./pages/Profile/Profile";
 import Statistics from "./pages/Statistics/Statistics";
+import StudentLayout from "./pages/Student/StudentLayout";
+import StudentHome from "./pages/Student/StudentHome";
+import StudentLeaders from "./pages/Student/StudentLeaders";
+import StudentRules from "./pages/Student/StudentRules";
+import StudentComplain from "./pages/Student/StudentComplain";
+import StudentProfile from "./pages/Student/StudentProfile";
+import AdminTeachers from "./pages/Admin/AdminTeachers";
+import AdminRules from "./pages/Admin/AdminRules";
+import AdminAppeals from "./pages/Admin/AdminAppeals";
 import { ToastContainer } from "react-toastify";
 
 const ProtectedRoute = ({ children }) => {
@@ -20,8 +29,15 @@ const ProtectedRoute = ({ children }) => {
   return token ? children : <Navigate to="/login" replace />;
 };
 
-function App() {
-  const router = createBrowserRouter([
+const StudentRoute = ({ children }) => {
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user") || "{}");
+  if (!token) return <Navigate to="/login" replace />;
+  if (user.role && user.role !== "student") return <Navigate to="/home" replace />;
+  return children;
+};
+
+const router = createBrowserRouter([
     {
       path: "/",
       element: <LandingPage />,
@@ -66,14 +82,43 @@ function App() {
           path: "classes/:id", // ":" dan oldin "/" bo'lishi shart va bu ClassDetail uchun
           element: <ClassDetail />,
         },
+        {
+          path: "teachers",
+          element: <AdminTeachers />,
+        },
+        {
+          path: "rules",
+          element: <AdminRules />,
+        },
+        {
+          path: "appeals",
+          element: <AdminAppeals />,
+        },
+      ],
+    },
+    {
+      path: "/student",
+      element: (
+        <StudentRoute>
+          <StudentLayout />
+        </StudentRoute>
+      ),
+      children: [
+        { index: true, element: <Navigate to="home" replace /> },
+        { path: "home", element: <StudentHome /> },
+        { path: "leaders", element: <StudentLeaders /> },
+        { path: "rules", element: <StudentRules /> },
+        { path: "complain", element: <StudentComplain /> },
+        { path: "profile", element: <StudentProfile /> },
       ],
     },
     {
       path: "*",
       element: <Navigate to="/" replace />,
     },
-  ]);
+]);
 
+function App() {
   return (
     <>
       <RouterProvider router={router} />

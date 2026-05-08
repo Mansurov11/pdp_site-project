@@ -31,19 +31,17 @@ const Login = () => {
       // Destructuring the response based on your API structure
       const { accessToken, user } = res.data.data;
 
-      // Check for Authorized Roles
-      if (user.role == "teacher" || user.role === "admin") {
-        // Save to LocalStorage
-        localStorage.setItem("token", accessToken);
-        localStorage.setItem("password", password);
-        localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("token", accessToken);
+      localStorage.setItem("user", JSON.stringify(user));
 
-        toast.success(`Xush kelibsiz, ${user.fullName || "Ustoz"}!`);
-        
-        // Redirect to the home/dashboard
+      toast.success(`Xush kelibsiz, ${user.fullName}!`);
+
+      if (user.role === "student") {
+        navigate("/student/home");
+      } else if (user.role === "teacher" || user.role === "admin") {
         navigate("/home");
       } else {
-        // Handle students or unauthorized roles
+        localStorage.clear();
         toast.warning("Sizda ushbu tizimga kirish huquqi yo'q!");
       }
     } catch (err) {

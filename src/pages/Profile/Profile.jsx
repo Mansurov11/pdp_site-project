@@ -2,19 +2,16 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import {
   User,
-  GraduationCap,
   Phone,
   Mail,
-  Bell,
-  Edit3,
   Lock,
   Eye,
   EyeOff,
   Save,
-  ChevronRight,
   Camera,
 } from "lucide-react";
 import Loader from "../../components/Loader";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const [loading, setLoading] = useState(true);
@@ -88,7 +85,7 @@ const Profile = () => {
       showStatus("Parol muvaffaqiyatli yangilandi!", "success");
 
       setPassData({
-        password: "",
+        currentPassword: "",
         newPassword: "",
       });
     } catch (error) {

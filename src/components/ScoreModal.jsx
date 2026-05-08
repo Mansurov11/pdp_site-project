@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { Loader, X } from "lucide-react";
-import { toast } from "react-toastify";
+import { X } from "lucide-react";
 
 const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, setSelectedPeople }) => {
   const [rules, setRules] = useState([]);
@@ -36,20 +35,18 @@ const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, 
     if (!selectedRule) return alert("Qoidani tanlang");
     if (reason.length < 10) return alert("Kamida 10 belgi yozing");
 
-    setSelectedPeople({
+    const data = {
       studentId: student.id,
       ruleId: selectedRule._id,
       reason,
-      evidenceUrl: "",
-    });
+    };
 
+    setSelectedPeople(data);
     setSelectedRule(null);
     setReason("");
 
-    toast.success("Baho qo'yildi");
-
-    onClose    
-
+    onClose();
+    onSubmit(data);
   };
 
   if (!isOpen) return null;
@@ -153,7 +150,7 @@ const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, 
           </button>
 
           <button
-            onClick={handleSubmit, onClose}
+            onClick={handleSubmit}
             className={`w-full py-3 rounded-2xl text-white font-semibold ${
               isPositive ? "bg-green-600" : "bg-red-600"
             }`}

@@ -10,7 +10,6 @@ import {
   X,
   Mail,
   User,
-  PlusSquareIcon,
 } from "lucide-react";
 import Loader from "../../components/Loader";
 import ScoreModal from "../../components/ScoreModal";
@@ -21,8 +20,6 @@ const ClassDetail = () => {
 
   const [classData, setClassData] = useState([]);
   const [loading, setLoading] = useState(true);
-
-  // Modal & Input States
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
@@ -31,6 +28,7 @@ const ClassDetail = () => {
   const [modalType, setModalType] = useState(null);
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [selectedPeople, setSelectedPeople] = useState({});
+  const [submitting, setSubmitting] = useState(false);
   const token = localStorage.getItem("token");
 
   useEffect(() => {
@@ -42,13 +40,9 @@ const ClassDetail = () => {
     try {
       const res = await axios.get(
         `https://pdp-system-backend-1.onrender.com/api/v1/scores/class/${id}`,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-
       setClassData(res.data?.data || []);
-      console.log(res.data?.data);
     } catch (err) {
       console.error(err.message);
       toast.error("Sinf ma'lumotlarini yuklashda xatolik");
@@ -59,28 +53,40 @@ const ClassDetail = () => {
 
   const handleAddStudent = async (e) => {
     e.preventDefault();
+    setSubmitting(true);
     try {
       const payload = {
-        fullName: firstName,
+        fullName: `${firstName} ${lastName}`.trim(),
         email: email,
+        password: "password123",
         role: "student",
+        classId: id,
+        taughtClassIds: [],
+        tutorOfClassId: null,
+        phone: "",
+        parentEmail: `parent.${email}`, // ✅ valid email format
+        parentPhone: "",
       };
 
+      console.log("Sending payload:", payload);
+
       await axios.post(
-        `https://pdp-system-backend-1.onrender.com/api/v1/classes/${id}/students`,
+        `https://pdp-system-backend-1.onrender.com/api/v1/users`,
         payload,
         { headers: { Authorization: `Bearer ${token}` } },
       );
 
       toast.success("Yangi o'quvchi muvaffaqiyatli qo'shildi!");
-
       setIsModalOpen(false);
       setFirstName("");
       setLastName("");
       setEmail("");
       fetchClassDetail();
     } catch (err) {
+      console.log("Error details:", err.response?.data);
       toast.error(err.response?.data?.message || "Xatolik yuz berdi");
+    } finally {
+      setSubmitting(false);
     }
   };
 
@@ -93,16 +99,13 @@ const ClassDetail = () => {
     setModalOpen(true);
   };
 
-  const handleScoreSubmit = async () => {
+  const handleScoreSubmit = async (data) => {
     try {
       await axios.post(
         `https://pdp-system-backend-1.onrender.com/api/v1/transactions`,
-       ...selectedPeople,
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        data,
+        { headers: { Authorization: `Bearer ${token}` } },
       );
-
       toast.success("Transaction qo'shildi!");
       setModalOpen(false);
       fetchClassDetail();
@@ -112,18 +115,16 @@ const ClassDetail = () => {
   };
 
   const getStatus = (score) => {
-    if (score <= 4) {
+    if (score <= 4)
       return {
         text: "Sariq ro'yhat",
         className: "bg-yellow-100 font-bold text-orange-600",
       };
-    }
-    if (score <= 6) {
+    if (score <= 6)
       return {
         text: "Ogohlantirish",
         className: "bg-yellow-100 font-bold text-yellow-500",
       };
-    }
     return {
       text: "Normal",
       className: "bg-green-100 font-bold text-green-600",
@@ -141,16 +142,12 @@ const ClassDetail = () => {
         <ArrowLeft size={20} /> Orqaga
       </button>
 
-      {/* Header Section */}
       <div className="bg-white rounded-[40px] p-10 border border-slate-100 shadow-sm mb-10">
         <div className="flex justify-between items-start">
           <div>
             <span className="bg-indigo-50 text-indigo-600 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
               Sinf ma'lumotlari
             </span>
-            <h1 className="text-6xl font-black text-slate-900 mt-4">
-              {/* If backend doesn't return class name, leave empty */}
-            </h1>
             <div className="flex items-center gap-2 mt-6 text-slate-400 font-bold">
               <Users size={20} />
               <span>{classData.length} o'quvchi ro'yxatda</span>
@@ -173,11 +170,10 @@ const ClassDetail = () => {
       <div className="grid grid-cols-1 gap-4">
         {classData.map((student, index) => {
           const status = getStatus(student.disciplineScore);
-
           return (
             <div
               key={student._id || index}
-              className="bg-white p-6 rounded-3xl border border-slate-50 flex items-center justify-between gap-1  group hover:border-indigo-100 transition-all"
+              className="bg-white p-6 rounded-3xl border border-slate-50 flex items-center justify-between gap-1 group hover:border-indigo-100 transition-all"
             >
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center font-black text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all text-sm">
@@ -193,22 +189,14 @@ const ClassDetail = () => {
                 </div>
               </div>
 
-              <div className="flex g1">
-                <p className="text-3xl text-black font-bold flex items-center gap-1">
-                  {student.disciplineScore}
-                </p>
-                <p className="text-xl text-slate-400 font-bold flex items-end gap-1">
-                  /10
-                </p>
-              </div>
-
-              <p className="text-3xl text-blue-400 font-semibold flex items-center gap-1">
-                + {student.rewardScore}
+              <p className="text-3xl text-black font-bold">
+                {student.disciplineScore + student.rewardScore}
+                <span className="text-base text-slate-400 font-medium ml-1">
+                  ball
+                </span>
               </p>
 
-              <span
-                className={`f1 rounded-full m-0 px-4 py-1 ${status.className}`}
-              >
+              <span className={`rounded-full px-4 py-1 ${status.className}`}>
                 {status.text}
               </span>
 
@@ -220,7 +208,6 @@ const ClassDetail = () => {
                 >
                   +
                 </button>
-
                 <button
                   onClick={() => openModal(student, "negative")}
                   type="button"
@@ -232,12 +219,17 @@ const ClassDetail = () => {
             </div>
           );
         })}
+
+        {classData.length === 0 && (
+          <div className="bg-slate-50 rounded-3xl p-16 text-center border-2 border-dashed border-slate-100">
+            <p className="text-slate-400 font-bold">O'quvchilar topilmadi</p>
+          </div>
+        )}
       </div>
 
-      {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-100 p-4">
-          <div className="bg-white w-full max-w-lg rounded-[3rem] p-10 shadow-2xl animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-50 p-4">
+          <div className="bg-white w-full max-w-lg rounded-[3rem] p-10 shadow-2xl">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-black text-slate-800">
                 Yangi o'quvchi
@@ -310,14 +302,16 @@ const ClassDetail = () => {
 
               <button
                 type="submit"
-                className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 mt-4"
+                disabled={submitting}
+                className="w-full bg-indigo-600 text-white py-5 rounded-3xl font-black text-xl shadow-xl shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 mt-4 disabled:opacity-60"
               >
-                Sinfga qo'shish
+                {submitting ? "Saqlanmoqda..." : "Sinfga qo'shish"}
               </button>
             </form>
           </div>
         </div>
       )}
+
       <ScoreModal
         isOpen={modalOpen}
         onClose={() => setModalOpen(false)}
