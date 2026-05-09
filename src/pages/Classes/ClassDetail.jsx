@@ -84,7 +84,7 @@ const ClassDetail = () => {
       fetchClassDetail();
     } catch (err) {
       console.log("Error details:", err.response?.data);
-      toast.error(err.response?.data?.message || "Xatolik yuz berdi");
+      toast.error("Daraja yetarli emas" || "Xatolik yuz berdi");
     } finally {
       setSubmitting(false);
     }

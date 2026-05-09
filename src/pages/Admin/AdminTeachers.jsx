@@ -54,18 +54,18 @@ export default function AdminTeachers() {
     }
   };
 
- const handleDelete = async (id) => {
-  if (!window.confirm("Bu ustozni o'chirmoqchimisiz?")) return;
-  try {
-    await axios.delete(`${BASE}/users/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    toast.success("Ustoz o'chirildi");
-    setTeachers((prev) => prev.filter((t) => t._id !== id)); // ✅ remove locally
-  } catch (err) {
-    toast.error(err.response?.data?.message || "O'chirishda xatolik");
-  }
-};
+  const handleDelete = async (id) => {
+    if (!window.confirm("Bu ustozni o'chirmoqchimisiz?")) return;
+    try {
+      await axios.delete(`${BASE}/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      toast.success("Ustoz o'chirildi");
+      fetchTeachers();
+    } catch (err) {
+      toast.error(err.response?.data?.message || "O'chirishda xatolik");
+    }
+  };
 
   const filtered = teachers.filter(
     (t) =>
