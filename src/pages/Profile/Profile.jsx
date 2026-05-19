@@ -203,7 +203,7 @@ const Profile = () => {
             </div>
           </div>
 
-          <div className="grid grid-cols-3 border-t border-slate-50 bg-[#FCFDFF]">
+          {/* <div className="grid grid-cols-3 border-t border-slate-50 bg-[#FCFDFF]">
             <StatsBox
               value={user?.classes?.length || 0}
               label="Sinflarim"
@@ -221,7 +221,7 @@ const Profile = () => {
               color="text-emerald-400"
               border
             />
-          </div>
+          </div> */}
         </div>
 
         {/* --- GRID SECTIONS --- */}
