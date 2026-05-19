@@ -5,10 +5,12 @@ import axios from "axios";
 import Pdp from "../../assets/pdp.png";
 
 const Login = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+ const [email, setEmail] = useState("student.9a1@gmail.com");
+const [password, setPassword] = useState("Student@123");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const EmailValue = useState("student.9a1@gmail.com")
+  const passwordValue = useState("Student@123")
 
   const isDesktop = window.innerWidth >= 1024;
 
@@ -156,6 +158,7 @@ const Login = () => {
               <input
                 type="email"
                 required
+                defaultValue={email}
                 placeholder="name@pdp.uz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -182,6 +185,7 @@ const Login = () => {
                 Parol
               </label>
               <input
+                defaultValue={password}
                 type="password"
                 required
                 placeholder="••••••••"
