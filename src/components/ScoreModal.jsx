@@ -21,6 +21,7 @@ const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, 
         },
       );
       setRules(res.data.data || []);
+       console.log(res.data.data || []);
 
     } catch {
       console.log("error rules");
@@ -33,12 +34,11 @@ const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, 
 
   const handleSubmit = () => {
     if (!selectedRule) return alert("Qoidani tanlang");
-    if (reason.length < 10) return alert("Kamida 10 belgi yozing");
 
     const data = {
       studentId: student.id,
       ruleId: selectedRule._id,
-      reason,
+      reason: selectedRule.description,
     };
 
     setSelectedPeople(data);
@@ -124,7 +124,7 @@ const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, 
           </div>
         </div>
 
-        {/* REASON */}
+        {/* REASON
         <div>
           <p className="font-semibold mb-2">Sabab (kamida 10 belgi)</p>
 
@@ -138,7 +138,7 @@ const ScoreModal = ({ isOpen, onClose, student, type, onSubmit, selectedPeople, 
           <p className="text-sm text-gray-400 mt-1">
             {reason.length} / 10 belgi
           </p>
-        </div>
+        </div> */}
 
         {/* ACTIONS */}
         <div className="flex gap-3">

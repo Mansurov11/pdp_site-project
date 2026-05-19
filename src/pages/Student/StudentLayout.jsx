@@ -114,7 +114,7 @@ const StudentLayout = () => {
           <StudentSidebar />
         </aside>
         <main className="flex-1 ml-72 overflow-y-auto p-6 md:p-10">
-          <div className="max-w-[1440px] mx-auto min-h-[calc(100vh-64px)]">
+          <div className="max-w-360 mx-auto min-h-[calc(100vh-64px)]">
             <Outlet />
           </div>
           <footer className="mt-20 py-8 text-center border-t border-slate-50">
