@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -64,20 +64,21 @@ export default function StudentComplain() {
   };
 
   return (
-    <div className="p-4 md:p-6">
-      <div className="mb-8">
-        <h1 className="text-4xl font-black text-slate-900 tracking-tight">Shikoyatlar</h1>
-        <p className="text-slate-500 font-semibold mt-1">
+    <div className="w-full">
+      {/* Page Header */}
+      <div className="mb-6 md:mb-8">
+        <h1 className="text-3xl md:text-4xl font-black text-slate-900 tracking-tight">Shikoyatlar</h1>
+        <p className="text-slate-500 font-semibold mt-1 text-sm md:text-base">
           Oyiga 3 ta shikoyat yuborishingiz mumkin
         </p>
       </div>
 
       {/* Submit form */}
-      <div className="bg-white rounded-3xl p-8 border border-slate-100 shadow-sm mb-8">
-        <h2 className="text-xl font-black text-slate-800 mb-6">Yangi shikoyat</h2>
+      <div className="bg-white rounded-2xl md:rounded-3xl p-5 md:p-8 border border-slate-100 shadow-sm mb-6 md:mb-8">
+        <h2 className="text-lg md:text-xl font-black text-slate-800 mb-5 md:mb-6">Yangi shikoyat</h2>
 
         {preselectedTeacher && (
-          <div className="mb-5 p-4 bg-indigo-50 rounded-2xl border border-indigo-100">
+          <div className="mb-4 md:mb-5 p-3 md:p-4 bg-indigo-50 rounded-xl md:rounded-2xl border border-indigo-100">
             <p className="text-sm font-bold text-indigo-700">
               Ustoz: {preselectedTeacher.fullName}
             </p>
@@ -85,7 +86,7 @@ export default function StudentComplain() {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-5">
           <div>
             <label className="text-xs font-black text-slate-400 uppercase tracking-widest block mb-2">
               Tranzaksiya ID
@@ -95,7 +96,7 @@ export default function StudentComplain() {
               value={txId}
               onChange={(e) => setTxId(e.target.value)}
               placeholder="Tranzaksiya ID ni kiriting..."
-              className="w-full px-4 py-3.5 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-700"
+              className="w-full px-3 md:px-4 py-3 md:py-3.5 bg-slate-50 rounded-xl md:rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-700 text-sm md:text-base"
               readOnly={!!preselectedTxId}
             />
             {preselectedTxId && (
@@ -114,7 +115,7 @@ export default function StudentComplain() {
               onChange={(e) => setMessage(e.target.value)}
               placeholder="Shikoyatingizni batafsil yozing..."
               rows={4}
-              className="w-full px-4 py-3.5 bg-slate-50 rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-700 resize-none"
+              className="w-full px-3 md:px-4 py-3 md:py-3.5 bg-slate-50 rounded-xl md:rounded-2xl outline-none focus:ring-2 focus:ring-indigo-500 font-semibold text-slate-700 resize-none text-sm md:text-base"
             />
             <p className={`text-xs font-medium mt-1 ${message.length >= 20 ? "text-green-500" : "text-slate-400"}`}>
               {message.length} / 20 belgi
@@ -124,7 +125,7 @@ export default function StudentComplain() {
           <button
             type="submit"
             disabled={submitting}
-            className="w-full bg-indigo-600 text-white py-4 rounded-2xl font-black text-base shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-60"
+            className="w-full bg-indigo-600 text-white py-3.5 md:py-4 rounded-xl md:rounded-2xl font-black text-sm md:text-base shadow-lg shadow-indigo-100 hover:bg-indigo-700 transition-all active:scale-95 disabled:opacity-60"
           >
             {submitting ? "Yuborilmoqda..." : "Shikoyat yuborish"}
           </button>
@@ -132,13 +133,13 @@ export default function StudentComplain() {
       </div>
 
       {/* Appeals list */}
-      <h2 className="text-2xl font-black text-slate-800 mb-5">Yuborilgan shikoyatlar</h2>
+      <h2 className="text-xl md:text-2xl font-black text-slate-800 mb-4 md:mb-5">Yuborilgan shikoyatlar</h2>
 
       {loading ? (
-        <div className="text-slate-400 font-black animate-pulse">Yuklanmoqda...</div>
+        <div className="text-slate-400 font-black animate-pulse text-center py-8">Yuklanmoqda...</div>
       ) : appeals.length === 0 ? (
-        <div className="bg-slate-50 rounded-3xl p-16 text-center border-2 border-dashed border-slate-100">
-          <p className="text-slate-400 font-bold">Hali shikoyat yo'q</p>
+        <div className="bg-slate-50 rounded-2xl md:rounded-3xl p-12 md:p-16 text-center border-2 border-dashed border-slate-100">
+          <p className="text-slate-400 font-bold text-sm md:text-base">Hali shikoyat yo'q</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
@@ -148,9 +149,37 @@ export default function StudentComplain() {
             return (
               <div
                 key={appeal._id}
-                className="bg-white rounded-2xl p-6 border border-slate-50 hover:border-indigo-100 transition-all"
+                className="bg-white rounded-xl md:rounded-2xl p-4 md:p-6 border border-slate-50 hover:border-indigo-100 transition-all"
               >
-                <div className="flex items-start justify-between gap-3 mb-3">
+                {/* Mobile Layout */}
+                <div className="flex flex-col sm:hidden gap-3 mb-3">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <p className="font-bold text-slate-800 text-sm">
+                        {tx?.ruleSnapshot?.title || "Tranzaksiya"}
+                      </p>
+                      <p className="text-xs text-slate-400 font-medium mt-0.5 truncate">
+                        {tx?.reason}
+                      </p>
+                    </div>
+                    <span className={`px-2.5 py-1 rounded-full text-xs font-black ${st.cls} flex-shrink-0`}>
+                      {st.label}
+                    </span>
+                  </div>
+                  
+                  {tx?.pointChange !== undefined && (
+                    <span
+                      className={`font-black text-sm self-start ${
+                        tx.pointChange > 0 ? "text-green-600" : "text-red-600"
+                      }`}
+                    >
+                      {tx.pointChange > 0 ? "+" : ""}{tx.pointChange} ball
+                    </span>
+                  )}
+                </div>
+
+                {/* Desktop Layout */}
+                <div className="hidden sm:flex items-start justify-between gap-3 mb-3">
                   <div>
                     <p className="font-bold text-slate-800 text-sm">
                       {tx?.ruleSnapshot?.title || "Tranzaksiya"}
@@ -175,16 +204,19 @@ export default function StudentComplain() {
                   </div>
                 </div>
 
-                <p className="text-sm text-slate-600 font-medium bg-slate-50 rounded-xl p-3">
+                {/* Message */}
+                <p className="text-sm text-slate-600 font-medium bg-slate-50 rounded-lg md:rounded-xl p-3">
                   "{appeal.message}"
                 </p>
 
+                {/* Admin Response */}
                 {appeal.adminResponse && (
-                  <p className="text-sm text-indigo-700 font-medium bg-indigo-50 rounded-xl p-3 mt-2">
+                  <p className="text-sm text-indigo-700 font-medium bg-indigo-50 rounded-lg md:rounded-xl p-3 mt-2">
                     Admin javobi: {appeal.adminResponse}
                   </p>
                 )}
 
+                {/* Date */}
                 <p className="text-xs text-slate-300 font-medium mt-2">
                   {new Date(appeal.createdAt).toLocaleDateString("uz-UZ")}
                 </p>
