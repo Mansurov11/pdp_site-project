@@ -114,7 +114,7 @@ export default function StudentHome() {
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
                       <div
-                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-lg flex-shrink-0 ${
+                        className={`w-10 h-10 rounded-lg flex items-center justify-center font-black text-lg shrink-0 ${
                           isPlus ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
                         }`}
                       >
@@ -125,10 +125,11 @@ export default function StudentHome() {
                           {tx.ruleSnapshot?.title || tx.ruleId?.title}
                         </p>
                         <p className="text-xs text-slate-400 font-semibold truncate">{tx.reason}</p>
+                        <p className="text-xs text-slate-500 font-semibold truncate">id:{tx._id}</p>
                       </div>
                     </div>
                     <span
-                      className={`font-black text-base flex-shrink-0 ${
+                      className={`font-black text-base shrink-0 ${
                         isPlus ? "text-green-600" : "text-red-600"
                       }`}
                     >
@@ -155,7 +156,7 @@ export default function StudentHome() {
                     )}
 
                     {tx.isRevoked && (
-                      <span className="text-xs bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg flex-shrink-0">
+                      <span className="text-xs bg-slate-100 text-slate-400 font-bold px-3 py-1.5 rounded-lg shrink-0">
                         Bekor
                       </span>
                     )}
@@ -166,7 +167,7 @@ export default function StudentHome() {
                 <div className="hidden sm:flex items-center justify-between gap-3">
                   <div className="flex items-center gap-4 flex-1 min-w-0">
                     <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl flex-shrink-0 ${
+                      className={`w-12 h-12 rounded-xl flex items-center justify-center font-black text-xl shrink-0 ${
                         isPlus ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"
                       }`}
                     >
@@ -177,13 +178,13 @@ export default function StudentHome() {
                         {tx.ruleSnapshot?.title || tx.ruleId?.title}
                       </p>
                       <p className="text-sm text-slate-400 font-semibold truncate">{tx.reason}</p>
+                      <p className="text-sm text-slate-500 font-semibold truncate">id:{tx._id}</p>
                       <p className="text-xs text-slate-300 font-medium mt-0.5">
                         {tx.teacherId?.fullName} • {new Date(tx.createdAt).toLocaleDateString("uz-UZ")}
                       </p>
                     </div>
                   </div>
-
-                  <div className="flex items-center gap-3 flex-shrink-0">
+                  <div className="flex items-center gap-3 shrink-0">
                     <span
                       className={`font-black text-lg ${
                         isPlus ? "text-green-600" : "text-red-600"

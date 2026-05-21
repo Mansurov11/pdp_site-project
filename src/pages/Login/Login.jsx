@@ -149,14 +149,21 @@ const Login = () => {
   const [loading, setLoading]   = useState(false);
   const navigate = useNavigate();
 
-  /* Inject styles once on mount */
+  /* ─── SAHIFAGA KIRGANDA BACKENDNI UYG'OTISH ─── */
   useEffect(() => {
+    // Stillarni inject qilish
     const tag = document.createElement("style");
     tag.id = "login-styles";
     tag.textContent = styles;
     if (!document.getElementById("login-styles")) {
       document.head.appendChild(tag);
     }
+
+    // Backend serverga "ping" jo'natib uyg'otib qo'yamiz
+    axios.get("https://pdp-system-backend-1.onrender.com/")
+      .then(() => console.log("Backend muvaffaqiyatli uyg'ondi."))
+      .catch(() => console.log("Backend uyg'onmoqda..."));
+
     return () => tag.remove();
   }, []);
 
@@ -167,20 +174,30 @@ const Login = () => {
       return toast.error("Iltimos, barcha maydonlarni to'ldiring");
     }
 
+    let wakeUpWarning;
+
     try {
       setLoading(true);
 
+      // Agar foydalanuvchi tezda bosib yuborsa va backend hali uxlab yotgan bo'lsa, 3 soniyadan keyin ogohlantiradi
+      wakeUpWarning = setTimeout(() => {
+        toast.info("Kirilmoqda, iltimos kuting", { autoClose: 2000 });
+      }, 2000);
+
       const res = await axios.post(
         "https://pdp-system-backend-1.onrender.com/api/v1/auth/login",
-        { email, password }
+        { email, password },
+        { timeout: 5000 } // Kutish vaqtini 1 daqiqagacha uzaytirdik
       );
+
+      clearTimeout(wakeUpWarning);
 
       const { accessToken, user } = res.data.data;
 
       localStorage.setItem("token", accessToken);
       localStorage.setItem("user", JSON.stringify(user));
 
-      toast.success(`Xush kelibsiz, ${user.fullName}!`);
+     toast.success(`Xush kelibsiz, ${user.fullName}!`, { autoClose: 2000 });
 
       if (user.role === "student") {
         navigate("/student/home");
@@ -191,6 +208,7 @@ const Login = () => {
         toast.warning("Sizda ushbu tizimga kirish huquqi yo'q!");
       }
     } catch (err) {
+      clearTimeout(wakeUpWarning);
       console.error("Login error:", err);
       const errorMessage =
         err.response?.data?.message || "Login yoki parol noto'g'ri";
@@ -202,13 +220,9 @@ const Login = () => {
 
   return (
     <div className="login-wrapper">
-
-      {/* ── Left Panel (hidden on mobile via CSS) ── */}
       <div className="login-left">
         <div className="login-left-shimmer" />
-
         <div className="login-left-content">
-          {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
             <div className="login-logo-box">
               <img src={Pdp} alt="PDP Logo" style={{ width: "80%" }} />
@@ -222,8 +236,6 @@ const Login = () => {
               </div>
             </div>
           </div>
-
-          {/* Quote */}
           <div>
             <p style={{ color: "white", fontSize: 24, fontWeight: 700, lineHeight: 1.4, marginBottom: 8, letterSpacing: "-0.01em" }}>
               "Tartib va intizom — muvaffaqiyatning kaliti"
@@ -233,13 +245,11 @@ const Login = () => {
             </p>
           </div>
         </div>
-
         <p className="login-left-footer">
           © 2026 PDP School. Barcha huquqlar himoyalangan.
         </p>
       </div>
 
-      {/* ── Right Panel ── */}
       <div className="login-right">
         <div className="login-form-inner">
           <h2 style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 6, letterSpacing: "-0.03em" }}>
@@ -250,7 +260,6 @@ const Login = () => {
           </p>
 
           <form onSubmit={handleLogin}>
-            {/* Email */}
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#475569", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Email Manzili
@@ -265,7 +274,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Password */}
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#475569", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Parol
@@ -280,7 +288,6 @@ const Login = () => {
               />
             </div>
 
-            {/* Forgot password */}
             <div style={{ marginBottom: 32, textAlign: "right" }}>
               <span
                 style={{ color: "#6366f1", fontSize: 14, cursor: "pointer", fontWeight: 700 }}
@@ -290,7 +297,6 @@ const Login = () => {
               </span>
             </div>
 
-            {/* Submit */}
             <button type="submit" disabled={loading} className="login-btn">
               {loading ? "Kirilmoqda..." : "Tizimga kirish"}
             </button>
