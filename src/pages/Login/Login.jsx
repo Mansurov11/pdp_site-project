@@ -1,36 +1,180 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import axios from "axios";
 import Pdp from "../../assets/pdp.png";
 
-const Login = () => {
- const [email, setEmail] = useState("student.9a1@gmail.com");
-const [password, setPassword] = useState("Student@123");
-  const [loading, setLoading] = useState(false);
-  const navigate = useNavigate();
-  const EmailValue = useState("student.9a1@gmail.com")
-  const passwordValue = useState("Student@123")
+/* ─── Injected responsive styles ─── */
+const styles = `
+  .login-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+    overflow: hidden;
+    font-family: sans-serif;
+  }
 
-  const isDesktop = window.innerWidth >= 1024;
+  /* ── Left Panel ── */
+  .login-left {
+    width: 45%;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #5b52f0 0%, #4338ca 40%, #3730a3 100%);
+  }
+
+  .login-left-shimmer {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(-132.5deg, #6366f1 50%, transparent 50%);
+    z-index: 1;
+  }
+
+  .login-left-content {
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    z-index: 10;
+  }
+
+  .login-logo-box {
+    width: 56px;
+    height: 56px;
+    background: white;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    flex-shrink: 0;
+  }
+
+  .login-left-footer {
+    color: #a5b4fc;
+    font-size: 12px;
+    z-index: 10;
+    font-weight: 500;
+  }
+
+  /* ── Right Panel ── */
+  .login-right {
+    flex: 1;
+    min-height: 100vh;
+    background: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 48px 24px;
+  }
+
+  .login-form-inner {
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .login-input {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #f1f5f9;
+    border-radius: 14px;
+    font-size: 15px;
+    color: #1e293b;
+    outline: none;
+    background-color: #f8fafc;
+    transition: border-color 0.2s;
+    box-sizing: border-box;
+  }
+
+  .login-input:focus {
+    border-color: #6366f1;
+  }
+
+  .login-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 14px;
+    border: none;
+    background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+    color: white;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
+    transition: transform 0.1s, opacity 0.2s;
+    margin-bottom: 24px;
+  }
+
+  .login-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.75;
+  }
+
+  .login-btn:not(:disabled):hover  { opacity: 0.9; }
+  .login-btn:not(:disabled):active { transform: scale(0.98); }
+
+  /* ── Mobile breakpoint ── */
+  @media (max-width: 1023px) {
+    .login-left {
+      display: none;
+    }
+
+    .login-right {
+      padding: 36px 20px;
+    }
+
+    .login-form-inner {
+      max-width: 100%;
+    }
+  }
+
+  /* ── Extra-small screens ── */
+  @media (max-width: 480px) {
+    .login-right {
+      padding: 28px 16px;
+      align-items: flex-start;
+      padding-top: 60px;
+    }
+  }
+`;
+
+const Login = () => {
+  const [email, setEmail]       = useState("student.9a1@gmail.com");
+  const [password, setPassword] = useState("Student@123");
+  const [loading, setLoading]   = useState(false);
+  const navigate = useNavigate();
+
+  /* Inject styles once on mount */
+  useEffect(() => {
+    const tag = document.createElement("style");
+    tag.id = "login-styles";
+    tag.textContent = styles;
+    if (!document.getElementById("login-styles")) {
+      document.head.appendChild(tag);
+    }
+    return () => tag.remove();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Basic Validation
     if (!email || !password) {
       return toast.error("Iltimos, barcha maydonlarni to'ldiring");
     }
 
     try {
       setLoading(true);
-      
+
       const res = await axios.post(
         "https://pdp-system-backend-1.onrender.com/api/v1/auth/login",
         { email, password }
       );
 
-      // Destructuring the response based on your API structure
       const { accessToken, user } = res.data.data;
 
       localStorage.setItem("token", accessToken);
@@ -48,100 +192,56 @@ const [password, setPassword] = useState("Student@123");
       }
     } catch (err) {
       console.error("Login error:", err);
-      const errorMessage = err.response?.data?.message || "Login yoki parol noto'g'ri";
+      const errorMessage =
+        err.response?.data?.message || "Login yoki parol noto'g'ri";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  // 69e0d9e520f198b345977645
-
   return (
-    <div style={{ display: "flex", minHeight: "100vh", width: "100%", overflow: "hidden", fontFamily: "sans-serif" }}>
-      
-      {/* ── Left Panel (Desktop Only) ── */}
-      {isDesktop && (
-        <div
-          style={{
-            width: "45%",
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "space-between",
-            padding: "40px",
-            position: "relative",
-            overflow: "hidden",
-            background:
-              "linear-gradient(135deg, #5b52f0 0%, #4338ca 40%, #3730a3 100%)",
-            flexShrink: 0,
-          }}
-        >
-          {/* Decorative Shimmer Overlay */}
-          <div
-            style={{
-              position: "absolute",
-              inset: 0,
-              pointerEvents: "none",
-              background: `linear-gradient(-132.5deg, #6366f1 50%, transparent 50%)`,
-              zIndex: 1,
-            }}
-          />
+    <div className="login-wrapper">
 
-          <div style={{ display: "flex", flexDirection: "column", gap: "32px", zIndex: 10 }}>
-            {/* Logo Section */}
-            <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-              <div
-                style={{
-                  width: 56,
-                  height: 56,
-                  background: "white",
-                  borderRadius: 16,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                  flexShrink: 0,
-                }}
-              >
-                <img src={Pdp} alt="PDP Logo" style={{ width: "80%" }} />
-              </div>
-              <div>
-                <div style={{ color: "white", fontWeight: 800, fontSize: 22, lineHeight: 1.2, letterSpacing: "-0.02em" }}>
-                  PDP School
-                </div>
-                <div style={{ color: "#a5b4fc", fontSize: 13, fontWeight: 600 }}>O'quvchi Etikasi Indeksi</div>
-              </div>
+      {/* ── Left Panel (hidden on mobile via CSS) ── */}
+      <div className="login-left">
+        <div className="login-left-shimmer" />
+
+        <div className="login-left-content">
+          {/* Logo */}
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className="login-logo-box">
+              <img src={Pdp} alt="PDP Logo" style={{ width: "80%" }} />
             </div>
-
-            {/* Motivational Text */}
             <div>
-              <p style={{ color: "white", fontSize: 24, fontWeight: 700, lineHeight: 1.4, marginBottom: 8, letterSpacing: "-0.01em" }}>
-                "Tartib va intizom — muvaffaqiyatning kaliti"
-              </p>
-              <p style={{ color: "#a5b4fc", fontSize: 14, fontWeight: 600 }}>- PDP School Management</p>
+              <div style={{ color: "white", fontWeight: 800, fontSize: 22, lineHeight: 1.2, letterSpacing: "-0.02em" }}>
+                PDP School
+              </div>
+              <div style={{ color: "#a5b4fc", fontSize: 13, fontWeight: 600 }}>
+                O'quvchi Etikasi Indeksi
+              </div>
             </div>
           </div>
 
-          <p style={{ color: "#a5b4fc", fontSize: 12, zIndex: 10, fontWeight: 500 }}>
-            © 2026 PDP School. Barcha huquqlar himoyalangan.
-          </p>
+          {/* Quote */}
+          <div>
+            <p style={{ color: "white", fontSize: 24, fontWeight: 700, lineHeight: 1.4, marginBottom: 8, letterSpacing: "-0.01em" }}>
+              "Tartib va intizom — muvaffaqiyatning kaliti"
+            </p>
+            <p style={{ color: "#a5b4fc", fontSize: 14, fontWeight: 600 }}>
+              - PDP School Management
+            </p>
+          </div>
         </div>
-      )}
 
-      {/* ── Right Panel (Login Form) ── */}
-      <div
-        style={{
-          flex: 1,
-          minHeight: "100vh",
-          background: "#ffffff",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: "48px 24px",
-        }}
-      >
-        <div style={{ width: "100%", maxWidth: 420 }}>
+        <p className="login-left-footer">
+          © 2026 PDP School. Barcha huquqlar himoyalangan.
+        </p>
+      </div>
+
+      {/* ── Right Panel ── */}
+      <div className="login-right">
+        <div className="login-form-inner">
           <h2 style={{ fontSize: 32, fontWeight: 800, color: "#111827", marginBottom: 6, letterSpacing: "-0.03em" }}>
             Xush kelibsiz
           </h2>
@@ -150,7 +250,7 @@ const [password, setPassword] = useState("Student@123");
           </p>
 
           <form onSubmit={handleLogin}>
-            {/* Email Field */}
+            {/* Email */}
             <div style={{ marginBottom: 20 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#475569", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Email Manzili
@@ -158,59 +258,31 @@ const [password, setPassword] = useState("Student@123");
               <input
                 type="email"
                 required
-                defaultValue={email}
                 placeholder="name@pdp.uz"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "14px 18px",
-                  border: "2px solid #f1f5f9",
-                  borderRadius: 14,
-                  fontSize: 15,
-                  color: "#1e293b",
-                  outline: "none",
-                  backgroundColor: "#f8fafc",
-                  transition: "border-color 0.2s",
-                  boxSizing: "border-box"
-                }}
-                onFocus={(e) => e.target.style.borderColor = "#6366f1"}
-                onBlur={(e) => e.target.style.borderColor = "#f1f5f9"}
+                className="login-input"
               />
             </div>
 
-            {/* Password Field */}
+            {/* Password */}
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: "block", fontSize: 13, fontWeight: 700, color: "#475569", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
                 Parol
               </label>
               <input
-                defaultValue={password}
                 type="password"
                 required
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                style={{
-                  width: "100%",
-                  padding: "14px 18px",
-                  border: "2px solid #f1f5f9",
-                  borderRadius: 14,
-                  fontSize: 15,
-                  color: "#1e293b",
-                  outline: "none",
-                  backgroundColor: "#f8fafc",
-                  transition: "border-color 0.2s",
-                  boxSizing: "border-box"
-                }}
-                onFocus={(e) => e.target.style.borderColor = "#6366f1"}
-                onBlur={(e) => e.target.style.borderColor = "#f1f5f9"}
+                className="login-input"
               />
             </div>
 
-            {/* Forgot Password Link */}
+            {/* Forgot password */}
             <div style={{ marginBottom: 32, textAlign: "right" }}>
-              <span 
+              <span
                 style={{ color: "#6366f1", fontSize: 14, cursor: "pointer", fontWeight: 700 }}
                 onClick={() => toast.info("Parolni tiklash uchun adminstratsiyaga murojaat qiling")}
               >
@@ -218,38 +290,16 @@ const [password, setPassword] = useState("Student@123");
               </span>
             </div>
 
-            {/* Submit Button */}
-            <button
-              type="submit"
-              disabled={loading}
-              style={{
-                width: "100%",
-                padding: "16px",
-                borderRadius: 14,
-                border: "none",
-                background: "linear-gradient(135deg, #6366f1 0%, #4f46e5 100%)",
-                color: "white",
-                fontWeight: 700,
-                fontSize: 16,
-                cursor: loading ? "not-allowed" : "pointer",
-                boxShadow: "0 10px 15px -3px rgba(99, 102, 241, 0.3)",
-                transition: "transform 0.1s, opacity 0.2s",
-                marginBottom: 24
-              }}
-              onMouseEnter={(e) => !loading && (e.target.style.opacity = "0.9")}
-              onMouseLeave={(e) => !loading && (e.target.style.opacity = "1")}
-              onMouseDown={(e) => !loading && (e.target.style.transform = "scale(0.98)")}
-              onMouseUp={(e) => !loading && (e.target.style.transform = "scale(1)")}
-            >
+            {/* Submit */}
+            <button type="submit" disabled={loading} className="login-btn">
               {loading ? "Kirilmoqda..." : "Tizimga kirish"}
             </button>
           </form>
 
-          {/* Bottom Help Text */}
           <p style={{ textAlign: "center", fontSize: 14, color: "#64748b", fontWeight: 500 }}>
             Hisobingiz yo'qmi?{" "}
             <span style={{ color: "#6366f1", cursor: "pointer", fontWeight: 700 }}>
-               Ustozingizga ayting!
+              Ustozingizga ayting!
             </span>
           </p>
         </div>
