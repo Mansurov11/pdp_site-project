@@ -11,19 +11,24 @@ export default function StudentLeaders() {
     fetchLeaders();
   }, []);
 
-  const fetchLeaders = async () => {
-    try {
-      const res = await axios.get(
-        "https://pdp-system-backend-1.onrender.com/api/v1/stats/leaderboard/students",
-        { headers: { Authorization: `Bearer ${token}` } }
-      );
-      setLeaders(res.data?.data || []);
-    } catch {
-      toast.error("Liderlar ro'yxatini yuklashda xatolik");
-    } finally {
-      setLoading(false);
-    }
-  };
+const fetchLeaders = async () => {
+  try {
+    const res = await axios.get(
+      "https://pdp-system-backend-1.onrender.com/api/v1/stats/leaderboard/students",
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    const sorted = (res.data?.data || []).sort(
+      (a, b) =>
+        b.disciplineScore - a.disciplineScore ||
+        b.rewardScore - a.rewardScore
+    );
+    setLeaders(sorted);
+  } catch {
+    toast.error("Liderlar ro'yxatini yuklashda xatolik");
+  } finally {
+    setLoading(false);
+  }
+};
 
   if (loading) {
     return (
