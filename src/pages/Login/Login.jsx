@@ -182,7 +182,7 @@ const Login = () => {
       // Agar foydalanuvchi tezda bosib yuborsa va backend hali uxlab yotgan bo'lsa, 3 soniyadan keyin ogohlantiradi
       wakeUpWarning = setTimeout(() => {
         toast.info("Kirilmoqda, iltimos kuting", { autoClose: 8000 });
-      }, 2000);
+      }, 8000);
 
       const res = await axios.post(
         "https://pdp-system-backend-1.onrender.com/api/v1/auth/login",

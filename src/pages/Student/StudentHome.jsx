@@ -11,6 +11,19 @@ const STATUS_MAP = {
   expelled: { label: "Chiqarilgan",   cls: "bg-slate-200 text-slate-600" },
 };
 
+const calcScore = (disciplineScore, rewardScore) => {
+  const discipline = disciplineScore ?? 0;
+  const reward = rewardScore ?? 0;
+  return discipline < 10 ? Math.min(discipline + reward, 10) : discipline;
+};
+
+const calcRemainingBonus = (disciplineScore, rewardScore) => {
+  const discipline = disciplineScore ?? 0;
+  const reward = rewardScore ?? 0;
+  const usedBonus = discipline < 10 ? Math.min(10 - discipline, reward) : 0;
+  return reward - usedBonus;
+};
+
 export default function StudentHome() {
   const [score, setScore] = useState(null);
   const [transactions, setTransactions] = useState([]);
@@ -51,6 +64,8 @@ export default function StudentHome() {
   }
 
   const status = STATUS_MAP[score?.status] || STATUS_MAP.normal;
+  const totalScore = calcScore(score?.disciplineScore, score?.rewardScore);
+  const remainingBonus = calcRemainingBonus(score?.disciplineScore, score?.rewardScore);
 
   return (
     <div className="w-full">
@@ -62,12 +77,13 @@ export default function StudentHome() {
 
       {/* Score Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-10">
+
         <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm">
           <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
             Intizom bali
           </p>
           <div className="flex items-end gap-1">
-            <span className="text-4xl md:text-5xl font-black text-slate-900">{score?.disciplineScore + score?.rewardScore}</span>
+            <span className="text-4xl md:text-5xl font-black text-slate-900">{totalScore}</span>
           </div>
         </div>
 
@@ -76,18 +92,13 @@ export default function StudentHome() {
             Bonus ball
           </p>
           <span className="text-4xl md:text-5xl font-black text-indigo-600">
-            +{score?.rewardScore ?? 0}
+            +{remainingBonus ?? 0}
           </span>
+         
         </div>
 
-        <div className="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm flex flex-col justify-between sm:col-span-2 lg:col-span-1">
-          <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">
-            Holat
-          </p>
-          <span className={`self-start px-3 md:px-4 py-1.5 md:py-2 rounded-xl md:rounded-2xl text-sm font-black ${status.cls}`}>
-            {status.label}
-          </span>
-        </div>
+      <div class="bg-white rounded-2xl md:rounded-3xl p-6 md:p-8 border border-slate-100 shadow-sm flex flex-col justify-between sm:col-span-2 lg:col-span-1"><p class="text-xs font-black text-slate-400 uppercase tracking-widest mb-2">Holat</p><span class="self-start px-3 md:px-4 py-1.5 md:py-2 rounded-xl md:rounded-2xl text-sm font-black bg-green-200 text-green-600">FAOL</span></div>
+
       </div>
 
       {/* Transactions */}
@@ -140,7 +151,7 @@ export default function StudentHome() {
                     <p className="text-xs text-slate-300 font-medium truncate flex-1">
                       {tx.teacherId?.fullName} • {new Date(tx.createdAt).toLocaleDateString("uz-UZ")}
                     </p>
-                    
+
                     {!tx.isRevoked && tx.pointChange < 0 && (
                       <button
                         onClick={() =>
