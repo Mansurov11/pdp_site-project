@@ -17,17 +17,16 @@ export default function StudentLeaders() {
         "https://pdp-system-backend-1.onrender.com/api/v1/stats/leaderboard/students",
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      const sorted = (res.data?.data || []).sort(
-        (a, b) =>
-          b.disciplineScore - a.disciplineScore ||
-          b.rewardScore - a.rewardScore
-      );
-      setLeaders(sorted);
+      setLeaders(res.data?.data || []);
     } catch {
       toast.error("Liderlar ro'yxatini yuklashda xatolik");
     } finally {
       setLoading(false);
     }
+  };
+
+  const sortLeaders = (data) => {
+    return [...data].sort((a, b) => b.rewardScore - a.rewardScore);
   };
 
   if (loading) {
@@ -44,6 +43,8 @@ export default function StudentLeaders() {
     "bg-orange-100 text-orange-500",
   ];
 
+  const sortedLeaders = sortLeaders(leaders);
+
   return (
     <div className="w-full">
       <div className="mb-6 md:mb-8">
@@ -58,13 +59,13 @@ export default function StudentLeaders() {
           <h2 className="text-lg md:text-xl font-black text-slate-800">Reyting jadvali</h2>
         </div>
 
-        {leaders.length === 0 ? (
+        {sortedLeaders.length === 0 ? (
           <div className="p-12 md:p-16 text-center">
             <p className="text-slate-400 font-bold text-sm md:text-base">Ma'lumot topilmadi</p>
           </div>
         ) : (
           <div className="divide-y divide-slate-50">
-            {leaders.map((leader, index) => (
+            {sortedLeaders.map((leader, index) => (
               <div
                 key={leader.student?._id || index}
                 className="hover:bg-slate-50/50 transition-all"
@@ -171,7 +172,6 @@ export default function StudentLeaders() {
                     </div>
                   </div>
                 </div>
-
               </div>
             ))}
           </div>
