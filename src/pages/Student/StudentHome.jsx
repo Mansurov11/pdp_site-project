@@ -67,8 +67,7 @@ export default function StudentHome() {
             Intizom bali
           </p>
           <div className="flex items-end gap-1">
-            <span className="text-4xl md:text-5xl font-black text-slate-900">{score?.disciplineScore ?? 0}</span>
-            <span className="text-lg md:text-xl font-bold text-slate-400 mb-0.5 md:mb-1">/10</span>
+            <span className="text-4xl md:text-5xl font-black text-slate-900">{score?.disciplineScore + score?.rewardScore}</span>
           </div>
         </div>
 

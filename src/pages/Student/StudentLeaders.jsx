@@ -25,8 +25,14 @@ export default function StudentLeaders() {
     }
   };
 
-  const sortLeaders = (data) => {
-    return [...data].sort((a, b) => b.rewardScore - a.rewardScore);
+  const applyBonusAndSort = (data) => {
+    const withBonus = data.map((leader) => {
+      const discipline = leader.disciplineScore ?? 0;
+      const reward = leader.rewardScore ?? 0;
+      const effectiveScore = discipline < 10 ? discipline + reward : discipline;
+      return { ...leader, effectiveScore };
+    });
+    return withBonus.sort((a, b) => b.effectiveScore - a.effectiveScore);
   };
 
   if (loading) {
@@ -43,7 +49,7 @@ export default function StudentLeaders() {
     "bg-orange-100 text-orange-500",
   ];
 
-  const sortedLeaders = sortLeaders(leaders);
+  const sortedLeaders = applyBonusAndSort(leaders);
 
   return (
     <div className="w-full">
@@ -102,7 +108,7 @@ export default function StudentLeaders() {
                     <div className="w-px h-4 bg-slate-200"></div>
                     <div className="flex items-center gap-1.5">
                       <span className="text-base font-black text-slate-700">
-                        {leader.disciplineScore}
+                        {leader.effectiveScore}
                       </span>
                       <span className="text-xs text-slate-400 font-medium">intizom</span>
                     </div>
@@ -125,16 +131,10 @@ export default function StudentLeaders() {
                     <p className="font-bold text-slate-800 truncate">{leader.student?.fullName}</p>
                     <p className="text-sm text-slate-400 font-medium truncate">{leader.student?.email}</p>
                   </div>
-                  <div className="flex items-center gap-4 flex-shrink-0">
-                    <div className="text-center">
-                      <span className="block text-lg font-black text-indigo-600">
-                        +{leader.rewardScore}
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium">bonus</span>
-                    </div>
+                  <div className="flex items-center gap-4 shrink-0">
                     <div className="text-center">
                       <span className="block text-lg font-black text-slate-700">
-                        {leader.disciplineScore}
+                        {leader.effectiveScore}
                       </span>
                       <span className="text-xs text-slate-400 font-medium">intizom</span>
                     </div>
@@ -150,7 +150,7 @@ export default function StudentLeaders() {
                   >
                     {index + 1}
                   </div>
-                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center font-black text-indigo-600 text-sm flex-shrink-0">
+                  <div className="w-10 h-10 bg-indigo-50 rounded-xl flex items-center justify-center font-black text-indigo-600 text-sm shrink-0">
                     {leader.student?.fullName?.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase()}
                   </div>
                   <div className="flex-1 min-w-0">
@@ -159,16 +159,10 @@ export default function StudentLeaders() {
                   </div>
                   <div className="flex items-center gap-3 shrink-0">
                     <div className="text-right">
-                      <span className="block text-lg font-black text-indigo-600">
-                        +{leader.rewardScore}
+                      <span className="block text-center text-lg font-black text-slate-700">
+                        {leader.effectiveScore}
                       </span>
-                      <span className="text-xs text-slate-400 font-medium">bonus</span>
-                    </div>
-                    <div className="text-right">
-                      <span className="block text-lg font-black text-slate-700">
-                        {leader.disciplineScore}
-                      </span>
-                      <span className="text-xs text-slate-400 font-medium">intizom</span>
+                      <span className="text-xs text-slate-400 font-medium">intizom ball</span>
                     </div>
                   </div>
                 </div>

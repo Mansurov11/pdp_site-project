@@ -110,7 +110,7 @@ const ClassDetail = () => {
       <div className="grid grid-cols-1 gap-4">
         {classData?.students?.length > 0 ? (
           classData.students.map((student, index) => (
-            <div key={student._id} className="bg-white p-6 rounded-[24px] border border-slate-50 flex items-center justify-between group hover:border-indigo-100 transition-all">
+            <div key={student._id} className="bg-white p-6 rounded-3xl border border-slate-50 flex items-center justify-between group hover:border-indigo-100 transition-all">
               <div className="flex items-center gap-4">
                 <div className="w-12 h-12 bg-slate-100 rounded-xl flex items-center justify-center font-black text-slate-400 group-hover:bg-indigo-600 group-hover:text-white transition-all">{index + 1}</div>
                 <div>
@@ -129,7 +129,7 @@ const ClassDetail = () => {
 
       {/* --- ADD STUDENT MODAL --- */}
       {isModalOpen && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-100 p-4">
           <div className="bg-white w-full max-w-lg rounded-[2.5rem] p-10 shadow-2xl animate-in zoom-in-95 duration-200">
             <div className="flex justify-between items-center mb-8">
               <h2 className="text-3xl font-black text-slate-800">O'quvchi qo'shish</h2>
