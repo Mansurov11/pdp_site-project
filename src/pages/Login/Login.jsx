@@ -143,33 +143,6 @@ const styles = `
   }
 `;
 
-const BASE_URL = "https://pdp-system-backend-1.onrender.com";
-
-// ─── Token yangilash funksiyasi ───
-export const refreshAccessToken = async () => {
-  const refreshToken = localStorage.getItem("refreshToken");
-
-  if (!refreshToken) {
-    throw new Error("RefreshToken topilmadi");
-  }
-
-  const res = await axios.post(`${BASE_URL}/api/v1/auth/refresh`, {
-    refreshToken,
-  });
-
-  const newAccessToken = res.data.data.accessToken;
-  const newRefreshToken = res.data.data.refreshToken;
-
-  localStorage.setItem("token", newAccessToken);
-
-  // Agar backend yangi refreshToken ham qaytarsa — uni ham saqlash
-  if (newRefreshToken) {
-    localStorage.setItem("refreshToken", newRefreshToken);
-  }
-
-  return newAccessToken;
-};
-
 const Login = () => {
   const [email, setEmail]       = useState("student.9a1@gmail.com");
   const [password, setPassword] = useState("Student@123");
@@ -187,7 +160,7 @@ const Login = () => {
     }
 
     // Backend serverga "ping" jo'natib uyg'otib qo'yamiz
-    axios.get(`${BASE_URL}/`)
+    axios.get("https://pdp-system-backend-1.onrender.com/")
       .then(() => console.log("Backend muvaffaqiyatli uyg'ondi."))
       .catch(() => console.log("Backend uyg'onmoqda..."));
 
@@ -206,27 +179,25 @@ const Login = () => {
     try {
       setLoading(true);
 
-      // Agar backend hali uxlab yotgan bo'lsa, 8 soniyadan keyin ogohlantiradi
+      // Agar foydalanuvchi tezda bosib yuborsa va backend hali uxlab yotgan bo'lsa, 3 soniyadan keyin ogohlantiradi
       wakeUpWarning = setTimeout(() => {
-        toast.info("Kirilmoqda, iltimos kuting...", { autoClose: 8000 });
+        toast.info("Kirilmoqda, iltimos kuting", { autoClose: 8000 });
       }, 8000);
 
       const res = await axios.post(
-        `${BASE_URL}/api/v1/auth/login`,
+        "https://pdp-system-backend-1.onrender.com/api/v1/auth/login",
         { email, password },
-        { timeout: 60000 } // ✅ 60 soniya — backend uyg'onishiga yetarli
+        { timeout: 60000 }
       );
 
       clearTimeout(wakeUpWarning);
 
-      const { accessToken, refreshToken, user } = res.data.data;
+      const { accessToken, user } = res.data.data;
 
-      // ✅ Ikkalasini ham saqlash
       localStorage.setItem("token", accessToken);
-      localStorage.setItem("refreshToken", refreshToken);
       localStorage.setItem("user", JSON.stringify(user));
 
-      toast.success(`Xush kelibsiz, ${user.fullName}!`, { autoClose: 2000 });
+     toast.success(`Xush kelibsiz, ${user.fullName}!`, { autoClose: 2000 });
 
       if (user.role === "student") {
         navigate("/student/home");
@@ -239,15 +210,8 @@ const Login = () => {
     } catch (err) {
       clearTimeout(wakeUpWarning);
       console.error("Login error:", err);
-
-      let errorMessage = "Login yoki parol noto'g'ri";
-
-      if (err.code === "ECONNABORTED") {
-        errorMessage = "Server javob bermadi, qayta urinib ko'ring";
-      } else if (err.response?.data?.message) {
-        errorMessage = err.response.data.message;
-      }
-
+      const errorMessage =
+        err.response?.data?.message || "Login yoki parol noto'g'ri";
       toast.error(errorMessage);
     } finally {
       setLoading(false);
@@ -339,7 +303,7 @@ const Login = () => {
           </form>
 
           <p style={{ textAlign: "center", fontSize: 14, color: "#64748b", fontWeight: 500 }}>
-            Hisobingiz yo'qmi?
+            Hisobingiz yo'qmi?{" "}
             <span style={{ color: "#6366f1", cursor: "pointer", fontWeight: 700 }}>
               Ustozingizga ayting!
             </span>
